@@ -1,19 +1,24 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { selectedSection} from '$lib/stores';
 
-  // Tipagem para os itens da Sidebar
-  type Section = string;
+  type Todo = {
+    id: number;
+    title: string;
+    completed: boolean;
+  };
 
-  // Lista de seções inicial (caso o localStorage esteja vazio)
+  type Section = {
+    name: string;
+    todos: Todo[];
+  };
+
   let sections: Section[] = [];
 
-  // Novo item a ser adicionado
   let newSection = "";
 
-  // Função utilitária para verificar se estamos no navegador
   const isBrowser = typeof window !== "undefined";
 
-  // Carregar itens do localStorage ao montar o componente
   onMount(() => {
     if (!isBrowser) return;
     const storedSections = localStorage.getItem("sidebarSections");
@@ -26,28 +31,26 @@
     localStorage.setItem("sidebarSections", JSON.stringify(sections));
   }
 
-  // Adicionar nova seção
   function addSection() {
     if (newSection.trim()) {
-      sections = [...sections, newSection.trim()];
-      newSection = ""; // Limpar o campo de entrada
+      sections = [...sections, { name: newSection.trim(), todos: [] }];
+      newSection = "";
     }
   }
 
-  // Remover uma seção pelo índice
   function removeSection(index: number) {
     sections = sections.filter((_, i) => i !== index);
   }
 </script>
 
-<div class="p-4 space-y-4">
-  <!-- Campo de Entrada para Nova Seção -->
+<div class="p-4 space-y-4 bg-gray-200">
   <div class="flex gap-2">
     <input
       type="text"
       bind:value={newSection}
       placeholder="Nova seção..."
       class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+      on:keypress={(e) => e.key === "Enter" && addSection()}
     />
     <button
       on:click={addSection}
@@ -57,11 +60,12 @@
     </button>
   </div>
 
-  <!-- Lista de Seções -->
   <ul class="space-y-2">
     {#each sections as section, index}
-      <li class="flex items-center justify-between px-4 py-2 bg-gray-50 border rounded-lg">
-        <span>{section}</span>
+      <li 
+  on:click={() => selectedSection.set(section)}
+  class="flex items-center justify-between px-4 py-2 bg-gray-50 hover:bg-purple-100 border rounded-lg cursor-pointer">
+        <span>{section.name}</span>
         <button
           on:click={() => removeSection(index)}
           class="text-red-500 hover:text-red-700"

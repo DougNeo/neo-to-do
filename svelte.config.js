@@ -1,21 +1,18 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
+export default {
   preprocess: vitePreprocess(),
-
   kit: {
     adapter: adapter({
       pages: 'build',
       assets: 'build',
-      fallback: '404.html' // Adicione esta linha para rotas dinâmicas
+      fallback: '404.html',
+      precompress: false
     }),
     paths: {
-      // Ajuste para o nome do seu repositório GitHub
-      base: process.env.NODE_ENV === 'production' ? '/neo-to-do' : '' 
+      base: process.env.NODE_ENV === 'production' ? '/neo-to-do' : '',
+      relative: false
     }
   }
 };
-
-export default config;

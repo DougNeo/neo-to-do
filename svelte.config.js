@@ -13,6 +13,15 @@ export default {
     paths: {
       base: process.env.NODE_ENV === 'production' ? '/neo-to-do' : '',
       relative: false
+    },
+    alias: {
+      $components: './src/components',
+      $stores: './src/stores',
+      $utils: './src/utils',
+      $styles: './src/styles',
+      $assets: './src/assets',
+      $config: './src/config',
+      $services: './src/services'
     }
   }
 };
